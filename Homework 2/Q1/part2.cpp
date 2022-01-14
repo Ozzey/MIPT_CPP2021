@@ -3,30 +3,23 @@
 using namespace std;
 
 
-double perimeter(size_t n,const double* x, const double* y){
-
-    double peri= 0;
-    peri += sqrt(pow(x[n-1]-x[0],2) + pow(y[n-1]-y[0],2)) ;
-    for (int i=0 ; i<n-1; i++) {
-        peri+= sqrt(pow(x[i+1]-x[i],2) + pow(y[i+1]-y[i],2));
-    }
-
-    //cout << pow(x[2]-x[1],2) << endl;
-    //cout << pow(y[2]-y[1],2) << endl;
-
-    return peri;
-
+double area(const size_t n,const double* x, const double* y){
+    double sum = 0;
+    if (n >= 3)
+        for (int i = 0; i < n; i ++)
+            sum += x[i] * y[(i + 1) % n] - x[(i + 1) % n] * y[i];
+    sum /= (double)2;
+    return (sum > 0 ? sum : - sum);
 }
 
-double area(size_t n, const double* x, const double* y){
-    double ar=0.0;
-
-    int j = n-1;
-    for(int i=0; i<n; i++){
-        ar +=  (x[j]+x[i])*(y[j]-y[i]);
-        j=i;
+double perimeter(const size_t n, const double* x, const double* y){
+    double perm=0.0;
+    for (int i = 0; i < n; i ++) {
+        const double vec_x = x[(i + 1) % n] - x[i];
+        const double vec_y = y[(i + 1) % n] - y[i];
+        perm+= sqrt(dot_product(vec_x, vec_y, vec_x, vec_y));
     }
-    return abs(ar/2.0);
+    return perm;
 }
 
 
