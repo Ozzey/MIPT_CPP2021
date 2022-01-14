@@ -6,7 +6,7 @@ double dot_product(double x1, double y1, double x2, double y2) {
     double vector_a[] = {x1,y1};
     double vector_b[] = {x2,y2};
     double product = 0;
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < 3; i++)
         product = product + vector_a[i] * vector_b[i];
 
     return product;
