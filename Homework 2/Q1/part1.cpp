@@ -3,20 +3,12 @@
 using namespace std;
 //function to calculate dot product of two vectors
 double dot_product(double x1, double y1, double x2, double y2) {
-    double vector_a[] = {x1,y1};
-    double vector_b[] = {x2,y2};
-    double product = 0;
-    for (int i = 0; i < 3; i++)
-        product = product + vector_a[i] * vector_b[i];
-
-    return product;
+    double prod = x1*x2+y1*y2;
+    return prod;
 }
 
 double cross_product(double x1, double y1, double x2, double y2) {
-    double vector_a[] = {x1, y1};
-    double vector_b[] = {x2, y2};
-
-    double cross_P = vector_a[0]*vector_b[1] - vector_b[0]*vector_a[1];
+       double cross_P = x1 * y2 - y1 * x2;
     return cross_P;
 }
 
