@@ -27,19 +27,14 @@ int main() {
     double x2;
     double y1;
     double y2;
-    const double* x = new double [1,1,2,2];
-    const double* y = new double [1,2,1,2];
-    size_t n;
 
     cin >> x1;
     cin >> x2;
     cin >> y1;
     cin >> y2;
-    n=4;
 
     cout << dot_product(x1,y1,x2,y2) << endl;
     cout << cross_product(x1,y1,x2,y2) << endl;
-    cout << perimeter(n, x, y);
 
     return 0;
 }
