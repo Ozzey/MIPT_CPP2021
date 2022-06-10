@@ -49,6 +49,15 @@
  
 ## Difference between exceptions and runtime errors. Errors that are not exceptions and exceptions that are not errors.
 
+```std::exception``` is the class whose only purpose is to serve as the base class in the exception hierarchy. It has no other uses. In other words, conceptually it is an abstract class (even though it is not defined as abstract class in C++ meaning of the term).
+
+```std::runtime_error``` is a more specialized class, descending from std::exception, intended to be thrown in case of various runtime errors. It has a dual purpose. It can be thrown by itself, or it can serve as a base class to various even more specialized types of runtime error exceptions, such as std::range_error, std::overflow_error etc. You can define your own exception classes descending from std::runtime_error, as well as you can define your own exception classes descending from std::exception.
+
+Just like ```std::runtime_error```, standard library contains ```std::logic_error```, also descending from ```std::exception```.
+
+ - Exceptions are expected failures, which we should recover from.
+ - Errors are unexpected failures. By definition, we cannot recover elegantly from unexpected failures.
+
 ## Rules for catching and re-throwing exceptions, casting types when catching exceptions.  
   Catching all exceptions. The rules for choosing a catch block by the compiler in the case when different blocks are suitable.  
   Type conversion : Only child to parent
