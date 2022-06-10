@@ -74,8 +74,30 @@ Used to create a particular case of type, so we dont need to specify type on fun
         f(1,1); // third called
     }
     ```
- - Function specialization vs template function specialization
- - Compiler selection rules for specialization and overloading candidates 
+ - Function specialization vs template function specialization  
+     There are cases where it will. Lets look at this sample code:  
+     ```c++
+     template<class T> // (a) 
+      void f(T);
+
+      template<>        // (b)
+      void f<>(int*);
+
+      template<class T> // (c)
+      void f(T*);
+
+      int main()
+      {
+          int *p; 
+          f(p);
+      }
+      ```
+      When we call `f(p);`, what function would you expect to be called? Most people would go with `b`, and they would be wrong. The reason for this is because specializations do not apply to overload resolution. They are a special recipe for a template that tells the compiler that if you deduce this type, then stamp out the template this way instead.
+
+   So what the compiler does is go through overload resolution and says I can call a with T being `int*`, or I can call c with T being int. Since the latter is more specialized (T is narrower), c wins. This can be very surprising but it makes a lot of sense once you ignore the specialization and just consider the overloads.  
+
+ - Compiler selection rules for sp
+ - ecialization and overloading candidates 
                 Can cause error since all types are preferable
     ![image](https://user-images.githubusercontent.com/49760167/173125491-b4fdd3e7-a253-436e-a718-40a03ffca654.png)
      to fix, create a new specialization
