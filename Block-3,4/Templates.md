@@ -1,99 +1,198 @@
-### Templates:
-- Functions specialization
-- What are templates (motivation):
-    - Template classes and functions, examples
-- Template specializations:
-    - The principle: `particular is preferable to general`
+
+# Templates:
+
+## Functions specialization:  
+   ![image](https://user-images.githubusercontent.com/49760167/173131458-578ee919-08f8-4a3b-a784-e9e513ef560e.png)
+
+
+## What are templates (motivation):
+   We want to write universal code for different data-types.
+   Template classes and functions, examples
+    
+  - For functions:  
+    ```c++
+    template <typename type>
+    void swap(type& first, type& second){
+        type temp = first ;
+        first = second;
+        second = temp;
+     }
+    ```
+  - For class:  
+    ```c++
+     template<typename type>
+     class A(){
+        // do something
+     }
+    ```
+    + Created in compile time
+ 
+
+    
+## Template specializations:
+Used to create a particular case of type, so we dont need to specify type on function call.  
+```c++
+   template <template type>
+    void f(type x){
+        ///....
+    }
+
+    template<>
+    void f(int x){
+        ///
+    }
+
+    int main(){
+        f(1.); /// [type = double]
+        f(1); /// [type = int]
+    }
+```
+    
+ - The principle: `particular is preferable to general`
     - The principle is `the exact match is better`
-    - Partial and full specializations
-    - Function specialization vs template function specialization
-    - Compiler selection rules for specialization and overloading candidates 
-- Template parameters that are not types (example: `std::array`). Template template parameters
+    - Partial and full specializations  
+   
+    ```c++
+    template <template first, template second>
+    void f(first x,second y){
+        ///....
+    }
+
+    template <template second>
+    void f(int x,second y){
+        ///....
+    }
+
+    template<>
+    void f(int x, int y){
+        ///...
+    }
+
+    int main(){
+        f(1.,1.); //first called
+        f(1,1.); // second called
+        f(1,1); // third called
+    }
+    ```
+ - Function specialization vs template function specialization  
+     There are cases where it will. Lets look at this sample code:  
+     ```c++
+     template<class T> // (a) 
+      void f(T);
+
+      template<>        // (b)
+      void f<>(int*);
+
+      template<class T> // (c)
+      void f(T*);
+
+      int main()
+      {
+          int *p; 
+          f(p);
+      }
+      ```
+      When we call `f(p);`, what function would you expect to be called? Most people would go with `b`, and they would be wrong. The reason for this is because specializations do not apply to overload resolution. They are a special recipe for a template that tells the compiler that if you deduce this type, then stamp out the template this way instead.
+
+   So what the compiler does is go through overload resolution and says I can call a with T being `int*`, or I can call c with T being int. Since the latter is more specialized (T is narrower), c wins. This can be very surprising but it makes a lot of sense once you ignore the specialization and just consider the overloads.  
+
+ - Compiler selection rules for sp
+ - ecialization and overloading candidates 
+                Can cause error since all types are preferable
+    ![image](https://user-images.githubusercontent.com/49760167/173125491-b4fdd3e7-a253-436e-a718-40a03ffca654.png)
+     to fix, create a new specialization
+     ```c++
+        template<>
+        void f(int x, int y){
+            ///...
+        }
+     ```
+
+- ***Template parameters that are not types (example: `std::array`).*** 
+    A non-type template argument provided within a template argument list is an expression whose value can be determined at compile time. Such arguments must be constant expressions, addresses of functions or objects with external linkage, or addresses of static class members. Non-type template arguments are normally used to initialize a class or to specify the sizes of class members.
+    ```c++
+    template<typename type, size_t size>
+    class array{
+        //...
+     }
+    ```
+    
+    
+- ***Template template parameters***:  
+    A template argument for a template template parameter is the name of a class template.
+When the compiler tries to find a template to match the template template argument, it only considers primary class templates. (A primary template is the template that is being specialized.) The compiler will not consider any partial specialization even if their parameter lists match that of the template template parameter. For example, the compiler will not allow the following code:
+    ```c++
+    template<class T, int i> class A {
+           int x;
+        };
+
+        template<class T> class A<T, 5> {
+           short x;
+        };
+
+        template<template<class T> class U> class B1 { };
+
+        B1<A> c;
+    ```
+    
 - `typedef` keyword
-- `using` keyword: template and non-template `using` versions
--  template recursion: ideas and usage (example: function `print_all`)
+    ```c++
+    typedef a_class<int, std::vector<int>> shortname;
+    ```
+- `using` keyword: template and non-template `using` versions  
+    Used to create alias
+   ```c++
+    template <class type>
+    using short_name_template = a_class<int, std::vector<type>>;
+   ```
 
-### Inheritance:
-- Inheritance declaration:
-    - `protected` access modifier.
-    - Difference between `private`, `public` and `protected` inheritance.
-    - Difference between `class` inheritance and `struct`.
-    - Keyword `final`
-- Finding names when inheriting:
-    - Hiding names of the base class methods.
-    - Explicit call of the parent methods of the inheritor (Using `operator ::`).
-    - The order in which constructors and destructors are called in inheritance. The problem with the initialization of the parents when defining the constructor of the inheritor, again using the initializer lists to solve it.
-    - Multiple inheritance, ambiguity with it, diamond inheritance problem. Examples of disambiguation using type conversions and the `operator ::`.
-- Typecasting between parent and child:
-    - Trimming when copying, casting pointers, casting references.
-    - Operator `dynamic_cast`
-- `virtual` functions, their general idea and difference from non-virtual ones:
-    - Features of allocation of classes with `virtual` functions in memory
-    - `virtual` inheritance.
-    - Concept of the `v-table`
-    - `virtual` destructor and its purpose
-- The concept of dynamic polymorphism, polymorphic classes
-- Placement in memory of classes
-- Abstract classes:
-    - `pure virtual` functions, their features.
-    - `pure virtual` destructor (and why it causes the linker error).
-    - Keyword `override`.
-    - keyword `final` (for methods)
-- Curiously recurring template pattern 
+-  ***Variadic Template*** ,template recursion: ideas and usage (example: function `print_all`):  
+    Variadic arguments are very similar to arrays in C++. We can easily iterate through the arguments, find the size(length) of the template, can access the values by an index, and can slice the templates too. 
 
-### Exceptions:
-- General idea:
-    - Motivation for using exceptions.
-    - The `throw` statement and the `try/catch` block.
-    - Examples of standard operators that throw exceptions.
-- Difference between exceptions and runtime errors. Errors that are not exceptions and exceptions that are not errors.
-- Rules for catching and re-throwing exceptions, casting types when catching exceptions. Catching all exceptions. The rules for choosing a catch block by the compiler in the case when different blocks are suitable.
-- Copying when throwing and catching exceptions. Features of catching exceptions by value and by reference.
-- Old-style exception specifications and their problems, unexpected exceptions. C++ 11 style exception specifications, `noexcept` operator and specifier. Conditional noexcept.
-- Exceptions in constructors and the problem of memory leaks on exceptions.
-- Exceptions in destructors.
-- Security guarantees for exceptions: basic and strict.
+So basically, Variadic function templates are functions that can take multiple numbers of arguments.
+  ```c++
+    #include <iostream>
+    using namespace std;
 
+    // To handle base case of below recursive
+    // Variadic function Template
+    void print()
+    {
+        cout << "I am empty function and "
+                "I am called at last.\n";
+    }
 
+    // Variadic function Template that takes
+    // variable number of arguments and prints
+    // all of them.
+    template <typename T, typename... Types>
+    void print(T var1, Types... var2)
+    {
+        cout << var1 << endl;
 
-### Memory management:
-+ Operators `new`, `delete`, `new[]`, `delete[]`, recap and how they work in details
-+ Alignas new
-    + Size of structures
-    + Alignof
-    + Alignas specifier
-+ Lifecycle of the data
-+ Nothrow `operator new`
-+ Raw data allocation and deallocation
-+ Calling destructor explicitly
-+ Operator placement new, calling constructor explicitly
-+ `std::construct_at`, `std::destroy_at`
-+ Operator `new` VS function "operator new"
-+ Signature of the function "operator new"
-+ Array versions of functions "operator new" and "operator delete"
-+ Replacing functions "operator new" and "operator delete", motivation, example
-+ Memory allocation mechanism, its interface
-+ `std::allocator`
-+ `std::allocator_traits`: motivation, typedefs and methods, usage
-+ Custom allocators: motivation, examples
-+ Comparison of different common custom allocators
+        print(var2...);
+    }
 
-### Move semantics:
-+ Rvalues and lvalues in C++07 (recap), troubles with them (examples)
-+ Temporary objects
-+ General idea of the new value mechanism in C++11: solving troubles of C++07
-+ Rvalue references
-+ `std::move`, invalidation of the initilial objects after move
-+ Move constructor, its signature and implementation
-+ Move assignment operator, its signature and implementation
-+ Default move constructor and move assignment operator
-+ The rule of **three/five/zero**
-+ Copy elision, RVO, NRVO
-+ Complete and incomplete tyeps
-+ Universal references
-+ `std::remove_reference`
-+ `std::move` implementation
-+ `std::forward`, its implementation
-+ Value categories in C++11: `glvalue`, `rvalue`, `lvalue`, `prvalue`, `xvalue`
-+ Reference qualifiers
-+ Noexcept specifiers in C++17, conditional noexcept specifiers in C++17, potentially throwing functions in C++17, noexcept operator in C++17
+    // Driver code
+    int main()
+    {
+        print(1, 2, 3.14,
+              "Pass me any "
+              "number of arguments",
+              "I will print\n");
+
+        return 0;
+    }
+  ```
+ - ***Functors***  
+   A Functor is a object which acts like a function. Basically, a class which defines operator().
+   ```c++
+   class MyFunctor
+    {
+       public:
+         int operator()(int x) { return x * 2;}
+    }
+
+    MyFunctor doubler;
+    int x = doubler(5);
+   ```
