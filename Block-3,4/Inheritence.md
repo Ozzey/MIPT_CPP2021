@@ -63,6 +63,11 @@ int main(){
       ![image](https://user-images.githubusercontent.com/49760167/173176763-2e0df350-0e87-46c1-9455-df9005d7cd06.png)
 
    - Keyword `final`
+      ```c++
+      struct Base1 final { };
+
+      struct Derived1 : Base1 { };
+      ```
    
 ## Finding names when inheriting:
    - Hiding names of the base class methods : When we re-declare same function in base class  
@@ -241,6 +246,9 @@ int main(){
       + We can use `reinterpret_cast(type *>(&x)` for pointers or refrence without changing anything at memory level.
       
    - Operator `dynamic_cast`
+      ```c++
+      const auto &other = dynamic_cast<const circle &>(another);
+      ```
       + Fully runtime based.
       + Casted at runtime.
       + Can only be used on polymorphic types.
@@ -248,7 +256,9 @@ int main(){
       
 ## The concept of dynamic polymorphism, polymorphic classes
    Dynamic Polymorphism implies the runtime resolution of function call. It is implies via Overriding which in turn is followed by inheritance in c++.
-   ![image](https://user-images.githubusercontent.com/49760167/173179052-723f1f1c-44f4-433d-8cd4-5b9ee1d51137.png)
+   ![image](https://user-images.githubusercontent.com/49760167/173179052-723f1f1c-44f4-433d-8cd4-5b9ee1d51137.png)  
+   
+   - **Polymorphic class** A class that declares or inherits a virtual function is called a polymorphic class
 
 
 ## Abstract classes:
